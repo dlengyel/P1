@@ -76,6 +76,18 @@
     html { scroll-behavior: auto; }
     *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
   }
+  /* Mobile reading: the desktop layout caps body text at ~2/3 of the column and
+     keeps wide gutters, which reads as cramped on phones. On small screens let
+     text fill the full column and tighten the page gutters. Overrides the inline
+     max-width / horizontal-padding rules so no per-element edits are needed. */
+  @media (max-width: 640px) {
+    [style*="max-width: 66.66%"],
+    [style*="max-width: 75%"] { max-width: 100% !important; }
+    [style*="clamp(1.25rem, 5vw, 3rem)"] {
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
+    }
+  }
 </style>
 </helmet>
 <div data-theme="{{ theme }}" id="top" style="background: var(--bg); color: var(--text); font-family: 'Geist', system-ui, sans-serif; line-height: 1.5; transition: background 0.3s ease, color 0.3s ease; min-height: 100vh;">
