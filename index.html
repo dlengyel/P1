@@ -87,6 +87,12 @@
       padding-left: 1rem !important;
       padding-right: 1rem !important;
     }
+    /* Stack the partner logos vertically, centred, instead of a cramped row. */
+    .dl-logos {
+      flex-direction: column;
+      align-items: center !important;
+      gap: clamp(1.75rem, 6vw, 2.5rem) !important;
+    }
   }
 </style>
 </helmet>
@@ -363,7 +369,7 @@
 
   <!-- ===================== PARTNER LOGOS ===================== -->
   <section aria-label="Companies and products David has worked with" style="background: linear-gradient(180deg, rgb(42,47,54) 0%, rgb(25,31,38) 100%);">
-    <div style="max-width: 1080px; margin: 0 auto; padding: clamp(2.5rem, 5vw, 3.75rem) clamp(1.25rem, 5vw, 3rem); display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: clamp(1.75rem, 4vw, 3rem);">
+    <div class="dl-logos" style="max-width: 1080px; margin: 0 auto; padding: clamp(2.5rem, 5vw, 3.75rem) clamp(1.25rem, 5vw, 3rem); display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: clamp(1.75rem, 4vw, 3rem);">
       <img src="images/logo-direct.webp" alt="Direct Group" loading="lazy" decoding="async" style="height: clamp(40px, 5.6vw, 64px); width: auto; flex-shrink: 0;">
       <img src="images/logo-kosik.webp" alt="Košík.cz" loading="lazy" decoding="async" style="height: clamp(40px, 5.6vw, 64px); width: auto; flex-shrink: 0;">
       <img src="images/logo-skyshowmax.webp" alt="Sky and Showmax" loading="lazy" decoding="async" style="height: clamp(40px, 5.6vw, 64px); width: auto; flex-shrink: 0;">
