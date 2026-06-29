@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  ::selection { background: var(--accent-soft); }
+  /* --- Light (default) theme tokens --- */
+  :root, [data-theme="light"] {
+    --bg: oklch(0.992 0.003 250);
+    --bg-blur: oklch(0.992 0.003 250 / 0.72);
+    --surface: oklch(0.972 0.004 250);
+    --text: oklch(0.21 0.012 255);
+    --text-2: oklch(0.46 0.012 255);
+    --text-3: oklch(0.52 0.012 255);
+    --border: oklch(0.90 0.006 255);
+    --border-strong: oklch(0.83 0.008 255);
+    --accent: oklch(0.48 0.20 264);
+    --accent-soft: oklch(0.48 0.20 264 / 0.10);
+    --on-accent: oklch(0.99 0.002 250);
+  }
+  /* --- Dark theme tokens --- */
+  [data-theme="dark"] {
+    --bg: oklch(0.165 0.008 255);
+    --bg-blur: oklch(0.165 0.008 255 / 0.70);
+    --surface: oklch(0.205 0.010 255);
+    --text: oklch(0.95 0.005 255);
+    --text-2: oklch(0.70 0.010 255);
+    --text-3: oklch(0.65 0.010 255);
+    --border: oklch(0.30 0.012 255);
+    --border-strong: oklch(0.38 0.014 255);
+    --accent: oklch(0.72 0.155 264);
+    --accent-soft: oklch(0.72 0.155 264 / 0.14);
+    --on-accent: oklch(0.16 0.010 255);
+  }
+  /* Typography: balance headings, prevent widows/orphans/runts in body copy */
+  h1, h2, h3 { text-wrap: balance; }
+  p, h4, figcaption, li { text-wrap: pretty; }
+  /* Visible keyboard focus — WCAG 2.4.7 / 2.4.11 (focus appearance) */
+  a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+  /* Skip link — WCAG 2.4.1 Bypass Blocks */
+  .dl-skip { position: absolute; left: 50%; top: 0.6rem; transform: translateX(-50%) translateY(-180%); z-index: 100; background: var(--accent); color: var(--on-accent); padding: 0.65rem 1.1rem; border-radius: 8px; font-size: 0.92rem; font-weight: 500; text-decoration: none; transition: transform 0.18s ease; }
+  .dl-skip:focus { transform: translateX(-50%) translateY(0); }
+  /* Respect reduced-motion preferences — WCAG 2.3.3 */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  }
+</style>
+</helmet>
+<div data-theme="{{ theme }}" id="top" style="background: var(--bg); color: var(--text); font-family: 'Geist', system-ui, sans-serif; line-height: 1.5; transition: background 0.3s ease, color 0.3s ease; min-height: 100vh;">
+
+  <a href="#main" class="dl-skip">Skip to content</a>
+
+  <!-- ===================== NAV ===================== -->
+  <nav style="position: sticky; top: 0; z-index: 50; background: var(--bg-blur); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--border);">
+    <div style="max-width: 1080px; margin: 0 auto; padding: 0.95rem clamp(1.25rem, 5vw, 3rem); display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+      <a href="#top" style="text-decoration: none; color: var(--text); font-weight: 600; font-size: 1rem; letter-spacing: -0.01em;">David Lengyel</a>
+      <div style="display: flex; align-items: center; gap: clamp(1rem, 3vw, 2rem);">
+        <a href="#work" style="text-decoration: none; color: var(--text-2); font-size: 0.92rem; font-weight: 450; display: inline-flex; align-items: center; min-height: 24px; padding: 0.3rem 0.1rem;" style-hover="color: var(--text);">Work</a>
+        <a href="#about" style="text-decoration: none; color: var(--text-2); font-size: 0.92rem; font-weight: 450; display: inline-flex; align-items: center; min-height: 24px; padding: 0.3rem 0.1rem;" style-hover="color: var(--text);">About</a>
+        <a href="#contact" style="text-decoration: none; color: var(--text-2); font-size: 0.92rem; font-weight: 450; display: inline-flex; align-items: center; min-height: 24px; padding: 0.3rem 0.1rem;" style-hover="color: var(--text);">Contact</a>
+        <button onClick="{{ toggleTheme }}" aria-label="Toggle colour theme" title="Toggle theme" style="display: inline-flex; align-items: center; gap: 0.5rem; background: none; border: 1px solid var(--border); border-radius: 999px; padding: 0.38rem 0.7rem; cursor: pointer; color: var(--text-2); font-family: 'Geist Mono', monospace; font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase;" style-hover="border-color: var(--border-strong); color: var(--text);">
+          <span style="width: 11px; height: 11px; border-radius: 50%; border: 1.5px solid currentColor; background: {{ themeDot }};"></span>
+          <span>{{ themeLabel }}</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===================== HERO ===================== -->
+  <header id="main" tabindex="-1" style="max-width: 1080px; margin: 0 auto; padding: clamp(4.5rem, 12vw, 9rem) clamp(1.25rem, 5vw, 3rem) clamp(3.5rem, 8vw, 6rem); outline: none;">
+    <p style="font-family: 'Geist Mono', monospace; font-size: 0.8rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin: 0 0 1.8rem; font-weight: 500;">David Lengyel — Product Designer</p>
+    <h1 style="font-size: clamp(2.3rem, 6vw, 4.6rem); font-weight: 500; letter-spacing: -0.035em; line-height: 1.04; margin: 0; max-width: 16ch; text-wrap: balance;">I build product experiences that hold up under real constraints.</h1>
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem 2rem; margin-top: clamp(2.2rem, 5vw, 3.2rem);">
+      <a href="#work" style="display: inline-flex; align-items: center; gap: 0.55rem; text-decoration: none; background: var(--accent); color: var(--on-accent); padding: 0.85rem 1.4rem; border-radius: 999px; font-weight: 500; font-size: 0.98rem;" style-hover="opacity: 0.9;">
+        View work
+        <span aria-hidden="true" style="font-size: 1.05em;">↓</span>
+      </a>
+      <p style="margin: 0; color: var(--text-2); font-size: 0.98rem;">Based in Prague · Open to remote roles in EMEA</p>
+    </div>
+  </header>
+
+  <!-- divider -->
+  <div style="max-width: 1080px; margin: 0 auto; padding: 0 clamp(1.25rem, 5vw, 3rem);">
+    <div style="border-top: 1px solid var(--border);"></div>
+  </div>
+
+  <!-- ===================== WORK ===================== -->
+  <section id="work" style="max-width: 1080px; margin: 0 auto; padding: clamp(4.5rem, 9vw, 7.5rem) clamp(1.25rem, 5vw, 3rem) clamp(2rem, 4vw, 3rem);">
+    <p style="font-family: 'Geist Mono', monospace; font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin: 0 0 0.9rem; font-weight: 500;">Selected case studies</p>
+    <h2 style="font-size: clamp(1.7rem, 3.2vw, 2.5rem); font-weight: 500; letter-spacing: -0.025em; margin: 0; max-width: 20ch;">Two products, two very different sets of constraints.</h2>
+  </section>
+
+  <!-- ---------- CASE STUDY 01 — SHOWMAX ---------- -->
+  <article style="max-width: 1080px; margin: 0 auto; padding: 0 clamp(1.25rem, 5vw, 3rem) clamp(3rem, 6vw, 5rem);">
+    <div style="border-top: 1px solid var(--border-strong); padding-top: clamp(2rem, 4vw, 3rem);">
+      <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.6rem 1.2rem; margin-bottom: 1.6rem;">
+        <span style="font-family: 'Geist Mono', monospace; font-size: 0.78rem; letter-spacing: 0.12em; color: var(--text-3);">01</span>
+        <span style="font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em;">Showmax</span>
+        <span style="font-family: 'Geist Mono', monospace; font-size: 0.76rem; color: var(--text-3); letter-spacing: 0.04em;">Mobile streaming · 2020–2024</span>
+      </div>
+      <h3 style="font-size: clamp(1.45rem, 2.8vw, 2.1rem); font-weight: 500; letter-spacing: -0.02em; line-height: 1.22; margin: 0 0 1.6rem; max-width: 75%;">Designed a better mobile streaming experience for viewers where data is expensive, networks are unstable, and power cuts are routine.</h3>
+      <figure style="margin: 0 0 2rem;">
+        <img src="images/showmax-leading.jpg" alt="A viewer watching Showmax on their phone at a family dinner table" loading="lazy" decoding="async" style="display: block; width: 100%; aspect-ratio: 16 / 8; object-fit: cover; object-position: center; border-radius: 16px; border: 1px solid var(--border);">
+      </figure>
+      <p style="margin: 0 0 2rem; color: var(--text-2); font-size: clamp(1.02rem, 1.5vw, 1.15rem); line-height: 1.65; max-width: 66.66%;">Showmax serves customers across Africa, where streaming is shaped by very different constraints than in most Western markets. In many households, Android was the main or only device, and offline access, efficient playback, and fast content discovery had a direct impact on retention and viewing time.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.6rem 2.5rem; padding: 1.6rem 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+        <div>
+          <p style="font-family: 'Geist Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); margin: 0 0 0.5rem;">Role</p>
+          <p style="margin: 0; color: var(--text-2); line-height: 1.55; font-size: 0.98rem;">Product Designer, May 2020 – March 2024. Sole designer on the product, owning the mobile experience across Android and iOS in a continuous discovery setup.</p>
+        </div>
+        <div>
+          <p style="font-family: 'Geist Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); margin: 0 0 0.5rem;">Focus</p>
+          <p style="margin: 0; color: var(--text-2); line-height: 1.55; font-size: 0.98rem;">Two customer interviews per week for two years, quarterly outcomes tied to retention, content discovery, and time spent streaming.</p>
+        </div>
+      </div>
+
+      <!-- expandable detail — mounts on open; keyframe slides it down + wipes text in top→bottom, 300ms -->
+      <sc-if value="{{ showmaxOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="padding-top: clamp(2.2rem, 4vw, 3rem);">
+
+          <div style="margin-bottom: 2.6rem; max-width: 66.66%;">
+            <h4 style="font-family: 'Geist Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin: 0 0 0.9rem; font-weight: 500;">How I worked</h4>
+            <p style="margin: 0 0 1rem; color: var(--text-2); line-height: 1.68; font-size: 1.05rem;">Ran two customer interviews per week with my PM for more than two years. Designed the in-app recruitment form, structured the research repository, and worked from quarterly outcomes tied to retention, fast content discovery, and time spent streaming.</p>
+            <p style="margin: 0; color: var(--text-2); line-height: 1.68; font-size: 1.05rem;">Used an Opportunity Solution Tree to connect user problems to testable assumptions and prioritise work based on evidence and shipping effort.</p>
+          </div>
+
+          <div style="margin-bottom: 2.6rem; max-width: 66.66%;">
+            <h4 style="font-family: 'Geist Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin: 0 0 0.9rem; font-weight: 500;">What we were solving</h4>
+            <p style="margin: 0 0 1rem; color: var(--text-2); line-height: 1.68; font-size: 1.05rem;">The top three problems were power cuts, network instability, and content discovery. Keeping people engaged during outages and always giving them something new to watch was not optional — it had a direct effect on revenue.</p>
+            <p style="margin: 0; color: var(--text-2); line-height: 1.68; font-size: 1.05rem;">One assumption we spent time on was that customers found it hard to identify content that felt new on Showmax. That shaped how we thought about discovery.</p>
+          </div>
+
+          <div style="border-top: 1px solid var(--border); margin: clamp(1.6rem, 3.5vw, 2.6rem) 0 2.6rem;"></div>
+
+          <div style="margin-bottom: 2.6rem; max-width: 66.66%;">
+            <h4 style="font-family: 'Geist Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin: 0 0 0.9rem; font-weight: 500;">App player</h4>
+            <p style="margin: 0 0 1rem; color: var(--text-2); line-height: 1.68; font-size: 1.05rem;">The player was crowded with unlabeled, technical controls most users did not trust or understand. That made the interface feel intimidating and left no real estate for the controls that actually mattered during playback.</p>
+            <p style="margin: 0 0 1rem; color: var(--text-2); line-height: 1.68; font-size: 1.05rem;">We studied usage data and screen recordings to understand which features were used, which were ignored, and where users got stuck. That led to several concrete decisions: moving low-use features under an Advanced menu, keeping audio, subtitles, and video quality visible and clearly labelled, repositioning the timeline to reduce accidental system-gesture conflicts, and introducing gestures for playback, brightness, and volume.</p>
+            <p style="margin: 0; color: var(--text-2); line-height: 1.68; font-size: 1.05rem;">I also introduced screen lock after repeated complaints in interviews from parents and grandparents whose kids kept interrupting playback. It became one of the most warmly received changes in app store reviews.</p>
+          </div>
+
+          <figure style="margin: 0 0 2.6rem;">
+            <img src="images/showmax-player.webp" alt="The reworked landscape player shown across four phones: redesigned play/pause and 10-second skip controls with a clean bottom bar; the Video quality panel with data-saving options; the new double-tap-to-skip timeline with seek preview; and the in-player episode list with season tabs" loading="lazy" decoding="async" style="display: block; width: 100%; aspect-ratio: 3432 / 1962; object-fit: contain;">
+            <figcaption style="font-family: 'Geist Mono', monospace; font-size: 0.76rem; letter-spacing: 0.04em; color: var(--text-3); margin: 0.9rem 0 0;">The reworked player — clearer controls, labelled video quality, a repositioned timeline, and an in-player episode list.</figcaption>
+          </figure>
+
+          <div style="border-top: 1px solid var(--border); margin: clamp(1.6rem, 3.5vw, 2.6rem) 0 2.6rem;"></div>
+
+          <div style="margin-bottom: 2.6rem;">
+            <div style="max-width: 66.66%;">
+              <h4 style="font-family: 'Geist Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin: 0 0 0.9rem; font-weight: 500;">Downloads</h4>
+              <p style="margin: 0 0 1rem; color: var(--text-2); line-height: 1.68; font-size: 1.05rem;">Downloads were underused, even though they were one of the best tools for getting through power cuts and saving on data.</p>
+              <p style="margin: 0; color: var(--text-2); line-height: 1.68; font-size: 1.05rem;">We found that large groups of users did not know the feature existed or did not understand what it was for. I redesigned the empty state into a three-step onboarding flow that explained the feature and nudged users toward finding something to download. I also cleaned up the UI, moved management actions into context sheets and separate screens, replaced technical file-size language with plain terms, and grouped TV episodes into folders by series and season.</p>
+            </div>
+            <div style="margin-top: 2.4rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: clamp(1.4rem, 3vw, 2.4rem); align-items: start;">
+              <figure style="margin: 0; display: flex; flex-direction: column; align-items: center; gap: 0.9rem;">
+                <img src="images/showmax-dl-onboarding.webp" alt="Downloads onboarding — the first of three intro steps explaining how to download movies and TV shows to watch offline during load-shedding" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 270px; height: auto;">
+                <figcaption style="font-family: 'Geist Mono', monospace; font-size: 0.76rem; letter-spacing: 0.04em; color: var(--text-3); margin: 0; text-align: center;">Three-step onboarding intro</figcaption>
+              </figure>
+              <figure style="margin: 0; display: flex; flex-direction: column; align-items: center; gap: 0.9rem;">
+                <img src="images/showmax-dl-sheet.webp" alt="Download bottom sheet with plain-language quality options — Best quality, Data saving, and Advanced options" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 270px; height: auto;">
+                <figcaption style="font-family: 'Geist Mono', monospace; font-size: 0.76rem; letter-spacing: 0.04em; color: var(--text-3); margin: 0; text-align: center;">Plain-language quality options</figcaption>
+              </figure>
+              <figure style="margin: 0; display: flex; flex-direction: column; align-items: center; gap: 0.9rem;">
+                <img src="images/showmax-dl-states.webp" alt="Downloads list showing clear per-title states — queued, downloading, paused, and expiry countdowns — with TV episodes grouped into folders" loading="lazy" decoding="async" style="display: block; width: 100%; max-width: 270px; height: auto;">
+                <figcaption style="font-family: 'Geist Mono', monospace; font-size: 0.76rem; letter-spacing: 0.04em; color: var(--text-3); margin: 0; text-align: center;">Downloads list with clear states</figcaption>
+              </figure>
+            </div>
+          </div>
+
+          <!-- impact -->
+          <div style="margin-bottom: 2.6rem;">
+            <h4 style="font-family: 'Geist Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin: 0 0 1.4rem; font-weight: 500;">Impact</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1.5rem 2rem;">
+              <div style="border-top: 2px solid var(--border-strong); padding-top: 0.9rem;">
+                <div style="font-size: clamp(1.9rem, 3vw, 2.4rem); font-weight: 500; letter-spacing: -0.02em;"><span style="color: var(--text);">+</span>17%</div>
+                <p style="margin: 0.35rem 0 0; color: var(--text-2); font-size: 0.92rem; line-height: 1.45;">of playbacks used lower video quality to save data</p>
+              </div>
+              <div style="border-top: 2px solid var(--border-strong); padding-top: 0.9rem;">
+                <div style="font-size: clamp(1.9rem, 3vw, 2.4rem); font-weight: 500; letter-spacing: -0.02em;">~35%</div>
+                <p style="margin: 0.35rem 0 0; color: var(--text-2); font-size: 0.92rem; line-height: 1.45;">of users interacted with the episode list</p>
+              </div>
+              <div style="border-top: 2px solid var(--border-strong); padding-top: 0.9rem;">
+                <div style="font-size: clamp(1.9rem, 3vw, 2.4rem); font-weight: 500; letter-spacing: -0.02em;">55%</div>
+                <p style="margin: 0.35rem 0 0; color: var(--text-2); font-size: 0.92rem; line-height: 1.45;">of playbacks used the new gestures regularly</p>
+              </div>
+              <div style="border-top: 2px solid var(--border-strong); padding-top: 0.9rem;">
+                <div style="font-size: clamp(1.9rem, 3vw, 2.4rem); font-weight: 500; letter-spacing: -0.02em;">+10%</div>
+                <p style="margin: 0.35rem 0 0; color: var(--text-2); font-size: 0.92rem; line-height: 1.45;">completed downloads in the following weeks</p>
+              </div>
+              <div style="border-top: 2px solid var(--border-strong); padding-top: 0.9rem;">
+                <div style="font-size: clamp(1.9rem, 3vw, 2.4rem); font-weight: 500; letter-spacing: -0.02em;">+4%</div>
+                <p style="margin: 0.35rem 0 0; color: var(--text-2); font-size: 0.92rem; line-height: 1.45;">successful playbacks in the following weeks</p>
+              </div>
+              <div style="border-top: 2px solid var(--border-strong); padding-top: 0.9rem;">
+                <div style="font-size: clamp(1.9rem, 3vw, 2.4rem); font-weight: 500; letter-spacing: -0.02em;">0%</div>
+                <p style="margin: 0.35rem 0 0; color: var(--text-2); font-size: 0.92rem; line-height: 1.45;">change in usage from relocating low-use features</p>
+              </div>
+            </div>
+            <p style="margin: 1.4rem 0 0; font-family: 'Geist Mono', monospace; color: var(--text-3); font-size: 0.76rem; letter-spacing: 0.04em; line-height: 1.55; max-width: 66.66%;">All metrics are hard numbers from month-to-month tracking across A/B tests and production rollouts.</p>
+          </div>
+
+          <div style="border-top: 1px solid var(--border); margin: clamp(1.6rem, 3.5vw, 2.6rem) 0 2.6rem;"></div>
+
+          <div style="margin-bottom: 2.6rem; max-width: 66.66%;">
+            <h4 style="font-family: 'Geist Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin: 0 0 0.9rem; font-weight: 500;">Systems work</h4>
+            <p style="margin: 0; color: var(--text-2); line-height: 1.68; font-size: 1.05rem;">Built the mobile design system library collaboratively from scratch across squads and platforms, following platform-specific patterns for Android and iOS rather than forcing a single approach onto both. The library sped up prototyping, maintained consistency across the app, and made Design QA sharper and faster.</p>
+          </div>
+
+          <figure style="margin: 0 0 2.6rem;">
+            <img src="images/showmax-gallery.webp" alt="The Showmax app across phones and tablets — landscape player, series browse, episode details, live events, and profile management" loading="lazy" decoding="async" style="display: block; width: 100%; aspect-ratio: 2999 / 1804; object-fit: contain;">
+            <figcaption style="font-family: 'Geist Mono', monospace; font-size: 0.76rem; letter-spacing: 0.04em; color: var(--text-3); margin: 0.9rem 0 0;">One mobile design system, applied consistently across phones and tablets.</figcaption>
+          </figure>
+
+          <div style="max-width: 66.66%; padding: 1.7rem 1.8rem; background: var(--surface); border-radius: 14px; border: 1px solid var(--border);">
+            <h4 style="font-family: 'Geist Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); margin: 0 0 0.8rem; font-weight: 500;">What I take from it</h4>
+            <p style="margin: 0; color: var(--text); line-height: 1.65; font-size: 1.05rem;">This was the role where I understood what continuous product improvement actually means in practice: not big launches, but a reliable system for learning, deciding, and shipping something better every few weeks. Working under real user constraints made every design decision feel consequential.</p>
+          </div>
+        </div>
+      </sc-if>
+
+      <button onClick="{{ toggleShowmax }}" aria-expanded="{{ showmaxOpen }}" style="margin-top: 2.2rem; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 1rem 1.15rem 1rem 1.6rem; cursor: pointer; color: var(--text); font-family: 'Geist', sans-serif; font-size: 1.05rem; font-weight: 500; transition: border-color 0.2s ease, background 0.2s ease;" style-hover="border-color: var(--accent); background: var(--accent-soft);">
+        <span>{{ showmaxLabel }}</span>
+        <span style="display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: var(--on-accent); font-size: 1.35rem; line-height: 1; flex-shrink: 0;">{{ showmaxSign }}</span>
+      </button>
+    </div>
+  </article>
+
+  <!-- ---------- CASE STUDY 02 — FIDOO ---------- -->
+  <article style="max-width: 1080px; margin: 0 auto; padding: 0 clamp(1.25rem, 5vw, 3rem) clamp(3rem, 6vw, 5rem);">
+    <div style="border-top: 1px solid var(--border-strong); padding-top: clamp(2rem, 4vw, 3rem);">
+      <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.6rem 1.2rem; margin-bottom: 1.6rem;">
+        <span style="font-family: 'Geist Mono', monospace; font-size: 0.78rem; letter-spacing: 0.12em; color: var(--text-3);">02</span>
+        <span style="font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em;">Direct Fidoo</span>
+        <span style="font-family: 'Geist Mono', monospace; font-size: 0.76rem; color: var(--text-3); letter-spacing: 0.04em;">Fintech marketplace · Pre-MVP → launch · 2025–2026</span>
+      </div>
+      <h3 style="font-size: clamp(1.45rem, 2.8vw, 2.1rem); font-weight: 500; letter-spacing: -0.02em; line-height: 1.22; margin: 0 0 1.6rem; max-width: 75%;">Designed one setup experience for a marketplace that had to work across seven partners and four different integration patterns.</h3>
+      <figure style="margin: 0 0 2rem;">
+        <img src="images/fidoo-leading.jpg" alt="A business owner reviewing the Direct Fidoo new-business-loan wizard on a desktop — the Identity verification step, with BankID and two-document options" loading="lazy" decoding="async" style="display: block; width: 100%; aspect-ratio: 16 / 8; object-fit: cover; object-position: top; border-radius: 16px; border: 1px solid var(--border);">
+      </figure>
+      <p style="margin: 0 0 2rem; color: var(--text-2); font-size: clamp(1.02rem, 1.5vw, 1.15rem); line-height: 1.65; max-width: 66.66%;">Direct Fidoo is a neo-bank for SMEs in Central Europe, built as a fintech branch of Direct Group. The Ecosystems area gave customers access to third-party financial services — insurance, credit loans, and factoring — intended to help their businesses grow. Each partner operated at a different technical level, from pen-and-paper lead generation to full API integration.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.6rem 2.5rem; padding: 1.6rem 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+        <div>
+          <p style="font-family: 'Geist Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); margin: 0 0 0.5rem;">Role</p>
+          <p style="margin: 0; color: var(--text-2); line-height: 1.55; font-size: 0.98rem;">Product Designer for the Ecosystems and Marketplace experience. Worked with a product owner to design and deliver the end-to-end marketplace, pre-MVP through launch.</p>
+        </div>
+        <div>
+          <p style="font-family: 'Geist Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); margin: 0 0 0.5rem;">Outcome</p>
+          <p style="margin: 0; color: var(--text-2); line-height: 1.55; font-size: 0.98rem;">Launched with seven partners and four integration patterns, all handled by a single setup wizard, alongside the design system I built with the product.</p>
+        </div>
+      </div>
+
+      <sc-if value="{{ fidooOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="padding-top: clamp(2.2rem, 4vw, 3rem);">
+
+          <div style="margin-bottom: 2.6rem; max-width: 66.66%;">
+            <h4 style="font-family: 'Geist Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin: 0 0 0.9rem; font-weight: 500;">The problem</h4>
+            <p style="margin: 0 0 1rem; color: var(--text-2); line-height: 1.68; font-size: 1.05rem;">Customers entered the Marketplace and saw a catalog of third-party services: factoring, business insurance, fleet insurance, credit loans, and more — presented as product cards. The intended action was to find a relevant service and set it up.</p>
+            <p style="margin: 0; color: var(--text-2); line-height: 1.68; font-size: 1.05rem;">The underlying reality was more complex. Each partner required different data, used different technology, and operated at a different level of integration. Without a consistent setup structure, every new partner would have produced a different experience, and customers would have had no reliable frame for what to expect.</p>
+          </div>
+
+          <div style="margin-bottom: 2.6rem; max-width: 66.66%;">
+            <h4 style="font-family: 'Geist Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin: 0 0 0.9rem; font-weight: 500;">What I built</h4>
+            <p style="margin: 0 0 1rem; color: var(--text-2); line-height: 1.68; font-size: 1.05rem;">I designed a wizard that served as the single entry point for all seven partners, regardless of integration depth.</p>
+            <p style="margin: 0 0 1rem; color: var(--text-2); line-height: 1.68; font-size: 1.05rem;">The opening steps were the same for everyone: select the company the service was intended for, select the contact person, and review a short partner overview with three key benefits. From there, the wizard adapted — collecting the specific data each partner needed, such as the highest-revenue business entity, key customer details, or PSD2 financial consent.</p>
+            <p style="margin: 0 0 1rem; color: var(--text-2); line-height: 1.68; font-size: 1.05rem;">The final step depended on the integration level: lead generation ended with review and confirmation; intermediate integrations redirected to a partner wizard or displayed a customised iframe; full API integrations were built step by step, with business insurance as the most complex flow.</p>
+            <p style="margin: 0; color: var(--text-2); line-height: 1.68; font-size: 1.05rem;">The design covered four distinct integration patterns. Where possible, I worked with partners to align their frontend to our experience. Where that was not possible, I pushed for an explicit redirect rather than a seam that would confuse customers.</p>
+          </div>
+
+          <div style="margin-bottom: 2.6rem; max-width: 66.66%;">
+            <h4 style="font-family: 'Geist Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin: 0 0 0.9rem; font-weight: 500;">Pushing back</h4>
+            <p style="margin: 0 0 1rem; color: var(--text-2); line-height: 1.68; font-size: 1.05rem;">The most significant pushback came when a factoring partner wanted to use an API for looking up statutory bodies in public registers, with the business proposing to trigger that onboarding in the middle of a factoring application.</p>
+            <p style="margin: 0; color: var(--text-2); line-height: 1.68; font-size: 1.05rem;">I flagged it as contextually wrong: the customer had started a specific task, and interrupting them with an unrelated onboarding flow they had never asked for would hurt conversion for both Fidoo and the partner. A follow-up meeting with the partner ended with the idea being dropped entirely.</p>
+          </div>
+
+          <div style="margin-bottom: 2.6rem; max-width: 66.66%;">
+            <h4 style="font-family: 'Geist Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin: 0 0 0.9rem; font-weight: 500;">Discovery under constraint</h4>
+            <p style="margin: 0 0 1rem; color: var(--text-2); line-height: 1.68; font-size: 1.05rem;">The product was pre-MVP when I joined, which meant there were no real customers to test with yet. Research operations were unable to recruit the right respondents — this was a B2B product, and we needed CFOs, CEOs, and procurement decision-makers, not general users.</p>
+            <p style="margin: 0; color: var(--text-2); line-height: 1.68; font-size: 1.05rem;">My PO and I worked around it. I recruited qualified respondents from my professional network and designed a recruitment poster for a nearby coworking space, targeting local businesses frequented by decision-makers. The sample was small, but the people were right.</p>
+          </div>
+
+          <div style="margin-bottom: 2.6rem; max-width: 66.66%;">
+            <h4 style="font-family: 'Geist Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin: 0 0 0.9rem; font-weight: 500;">What shipped</h4>
+            <p style="margin: 0; color: var(--text-2); line-height: 1.68; font-size: 1.05rem;">The Marketplace launched with seven partners and four integration patterns — all handled by the same wizard. The launch scope matched the design system I had built alongside the product. After two waves of layoffs reduced the product and engineering team significantly, the decision was made to ship what was complete rather than continue building.</p>
+          </div>
+
+          <div style="max-width: 66.66%; padding: 1.7rem 1.8rem; background: var(--surface); border-radius: 14px; border: 1px solid var(--border);">
+            <h4 style="font-family: 'Geist Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); margin: 0 0 0.8rem; font-weight: 500;">What I take from it</h4>
+            <p style="margin: 0; color: var(--text); line-height: 1.65; font-size: 1.05rem;">The most valuable thing a designer can do in an early-stage product is make the complex manageable without pretending it is simple. At Fidoo, that meant designing for variability, keeping customers oriented across integration types they would never see, and being willing to say no to features that were technically possible but user-experience wrong.</p>
+          </div>
+        </div>
+      </sc-if>
+
+      <button onClick="{{ toggleFidoo }}" aria-expanded="{{ fidooOpen }}" style="margin-top: 2.2rem; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 1rem 1.15rem 1rem 1.6rem; cursor: pointer; color: var(--text); font-family: 'Geist', sans-serif; font-size: 1.05rem; font-weight: 500; transition: border-color 0.2s ease, background 0.2s ease;" style-hover="border-color: var(--accent); background: var(--accent-soft);">
+        <span>{{ fidooLabel }}</span>
+        <span style="display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: var(--on-accent); font-size: 1.35rem; line-height: 1; flex-shrink: 0;">{{ fidooSign }}</span>
+      </button>
+    </div>
+  </article>
+
+  <!-- ===================== ABOUT ===================== -->
+  <section id="about" style="max-width: 1080px; margin: 0 auto; padding: clamp(3.5rem, 7vw, 6rem) clamp(1.25rem, 5vw, 3rem);">
+    <div style="border-top: 1px solid var(--border-strong); padding-top: clamp(2rem, 4vw, 3rem); display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: clamp(2rem, 5vw, 4rem); align-items: start;">
+      <div>
+        <p style="font-family: 'Geist Mono', monospace; font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin: 0 0 0.9rem; font-weight: 500;">About</p>
+        <h2 style="font-size: clamp(1.7rem, 3.2vw, 2.5rem); font-weight: 500; letter-spacing: -0.025em; margin: 0; max-width: 16ch;">I build product experiences that hold up under real constraints.</h2>
+      </div>
+      <div style="max-width: 60ch;">
+        <p style="margin: 0 0 1.25rem; color: var(--text-2); line-height: 1.7; font-size: 1.08rem;">I’m a product designer based in Prague. I enjoy discovery, systems thinking, and making product decisions based on evidence. I work best in autonomous teams with stable ownership.</p>
+        <p style="margin: 0 0 1.25rem; color: var(--text-2); line-height: 1.7; font-size: 1.08rem;">I’m not looking for a leadership role. I want to stay close to the work and build good products with people who care about getting it right.</p>
+        <h3 style="font-family: 'Geist Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin: 2.4rem 0 0.9rem; font-weight: 500;">How I work</h3>
+        <p style="margin: 0 0 1.25rem; color: var(--text-2); line-height: 1.7; font-size: 1.08rem;">I align with teammates and stakeholders first. Then I use data and feedback to check assumptions, slow things down when needed, and avoid building the wrong thing. I use AI to sanity-check ideas and speed up prototypes.</p>
+        <p style="margin: 0; color: var(--text-2); line-height: 1.7; font-size: 1.08rem;">I’m open to remote roles in EMEA.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PARTNER LOGOS ===================== -->
+  <section aria-label="Companies and products David has worked with" style="background: linear-gradient(180deg, rgb(42,47,54) 0%, rgb(25,31,38) 100%);">
+    <div style="max-width: 1080px; margin: 0 auto; padding: clamp(2.5rem, 5vw, 3.75rem) clamp(1.25rem, 5vw, 3rem); display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: clamp(1.75rem, 4vw, 3rem);">
+      <img src="images/logo-direct.webp" alt="Direct Group" loading="lazy" decoding="async" style="height: clamp(40px, 5.6vw, 64px); width: auto; flex-shrink: 0;">
+      <img src="images/logo-kosik.webp" alt="Košík.cz" loading="lazy" decoding="async" style="height: clamp(40px, 5.6vw, 64px); width: auto; flex-shrink: 0;">
+      <img src="images/logo-skyshowmax.webp" alt="Sky and Showmax" loading="lazy" decoding="async" style="height: clamp(40px, 5.6vw, 64px); width: auto; flex-shrink: 0;">
+      <img src="images/logo-bluewolf.webp" alt="Bluewolf, an IBM Company" loading="lazy" decoding="async" style="height: clamp(40px, 5.6vw, 64px); width: auto; flex-shrink: 0;">
+      <img src="images/logo-betsys.webp" alt="Betsys" loading="lazy" decoding="async" style="height: clamp(40px, 5.6vw, 64px); width: auto; flex-shrink: 0;">
+    </div>
+  </section>
+
+  <!-- ===================== CONTACT / FOOTER ===================== -->
+  <footer id="contact" style="background: var(--surface); border-top: 1px solid var(--border);">
+    <div style="max-width: 1080px; margin: 0 auto; padding: clamp(3.5rem, 7vw, 6rem) clamp(1.25rem, 5vw, 3rem) clamp(2.5rem, 5vw, 4rem);">
+      <p style="font-family: 'Geist Mono', monospace; font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin: 0 0 1.3rem; font-weight: 500;">Contact</p>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: clamp(1.4rem, 4vw, 2.6rem); margin: 0 0 2.6rem;">
+        <img src="images/david-portrait.webp" alt="Portrait of David Lengyel" loading="lazy" decoding="async" style="flex-shrink: 0; width: clamp(84px, 14vw, 116px); height: clamp(84px, 14vw, 116px); border-radius: 50%; object-fit: cover; border: 1px solid var(--border);">
+        <h2 style="font-size: clamp(1.9rem, 4vw, 3rem); font-weight: 500; letter-spacing: -0.03em; margin: 0; max-width: 16ch; text-wrap: balance;">Let's talk about what you're building.</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.6rem 2rem; border-top: 1px solid var(--border); padding-top: 2rem;">
+        <div>
+          <p style="font-family: 'Geist Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); margin: 0 0 0.6rem;">Email</p>
+          <a href="mailto:david.lengyel@gmail.com" style="text-decoration: none; color: var(--text); font-size: 1.05rem;" style-hover="color: var(--accent);">david.lengyel@gmail.com</a>
+        </div>
+        <div>
+          <p style="font-family: 'Geist Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); margin: 0 0 0.6rem;">LinkedIn</p>
+          <a href="https://www.linkedin.com/in/davidlengyel" target="_blank" rel="noopener" style="text-decoration: none; color: var(--text); font-size: 1.05rem;" style-hover="color: var(--accent);">in/davidlengyel</a>
+        </div>
+        <div>
+          <p style="font-family: 'Geist Mono', monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); margin: 0 0 0.6rem;">CV</p>
+          <a href="https://drive.google.com/file/d/19QiDxOfD7Ls6hGbFuYwg1y5IXEv5rRU3/view?usp=sharing" target="_blank" rel="noopener" style="text-decoration: none; color: var(--text); font-size: 1.05rem; display: inline-flex; align-items: center; gap: 0.4rem;" style-hover="color: var(--accent);">Download PDF <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 0.6rem 1.4rem; margin-top: 2.4rem; font-family: 'Geist Mono', monospace; font-size: 0.76rem; letter-spacing: 0.04em; color: var(--text-3);">
+        <span>Figma</span><span>Maze</span><span>Dovetail</span><span>Continuous discovery</span><span>Design systems</span><span>A/B testing</span><span>Mobile (Android &amp; iOS)</span>
+      </div>
+      <p style="margin: 2.8rem 0 0; padding-top: 1.6rem; border-top: 1px solid var(--border); color: var(--text-3); font-size: 0.86rem; letter-spacing: 0.02em;">David Lengyel · Product Designer · Prague</p>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: &quot;100%&quot;, &quot;height&quot;: 820}, &quot;ctaIcon&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;chevron&quot;, &quot;plus&quot;], &quot;default&quot;: &quot;chevron&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Case study CTA&quot;}}">
+class Component extends DCLogic {
+  state = { theme: 'light', open: {} };
+
+  componentDidMount() {
+    try {
+      const saved = localStorage.getItem('dl-theme');
+      if (saved === 'dark' || saved === 'light') this.setState({ theme: saved });
+    } catch (e) {}
+  }
+
+  toggleTheme = () => {
+    this.setState(s => {
+      const theme = s.theme === 'dark' ? 'light' : 'dark';
+      try { localStorage.setItem('dl-theme', theme); } catch (e) {}
+      return { theme };
+    });
+  };
+
+  toggleSection = (key) => () => {
+    this.setState(s => ({ open: { ...s.open, [key]: !s.open[key] } }));
+  };
+
+  renderVals() {
+    const theme = this.state.theme || 'light';
+    const open = this.state.open || {};
+    const isDark = theme === 'dark';
+    const chevron = (this.props.ctaIcon ?? 'chevron') === 'chevron';
+    const chev = (isOpen) => React.createElement('svg', {
+      width: 16, height: 16, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor',
+      strokeWidth: 2.5, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true,
+      style: { display: 'block', transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s ease' }
+    }, React.createElement('polyline', { points: '6 9 12 15 18 9' }));
+    // chevron (SVG, rotates up when open) or plus/minus glyph
+    const sign = (isOpen) => chevron ? chev(isOpen) : (isOpen ? '\u2013' : '+');
+    return {
+      theme,
+      toggleTheme: this.toggleTheme,
+      // label shows the mode you'll switch TO
+      themeLabel: isDark ? 'Light' : 'Dark',
+      themeDot: isDark ? 'currentColor' : 'transparent',
+
+      showmaxOpen: !!open.showmax,
+      fidooOpen: !!open.fidoo,
+      toggleShowmax: this.toggleSection('showmax'),
+      toggleFidoo: this.toggleSection('fidoo'),
+      showmaxLabel: open.showmax ? 'Hide full case study' : 'Read full case study',
+      fidooLabel: open.fidoo ? 'Hide full case study' : 'Read full case study',
+      showmaxSign: sign(!!open.showmax),
+      fidooSign: sign(!!open.fidoo),
+    };
+  }
+}
+</script>
+</body>
+</html>
